@@ -1099,17 +1099,9 @@ function userHasInteracted() {
   if (state.tutorial != null && state.tutorial !== '') {
     page = `/v/tutorials/${state.tutorial}`;
   }
-  ga('set', 'page', page);
-  ga('send', 'pageview', {'sessionControl': 'start'});
 }
 
 function simulationStarted() {
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'Starting Simulation',
-    eventAction: parametersChanged ? 'changed' : 'unchanged',
-    eventLabel: state.tutorial == null ? '' : state.tutorial
-  });
   parametersChanged = false;
 }
 

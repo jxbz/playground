@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "start": "npm run serve-watch",
-    "prep": "copyfiles analytics.js dist && concat node_modules/material-design-lite/material.min.js node_modules/seedrandom/seedrandom.min.js > dist/lib.js",
+    "prep": "concat node_modules/material-design-lite/material.min.js node_modules/seedrandom/seedrandom.min.js > dist/lib.js",
     "build-css": "concat node_modules/material-design-lite/material.min.css styles.css > dist/bundle.css",
     "watch-css": "concat node_modules/material-design-lite/material.min.css styles.css -o dist/bundle.css",
     "build-html": "copyfiles index.html dist",
@@ -23,7 +23,7 @@
     "concat": "^1.0.3",
     "concurrently": "3.1.0",
     "copyfiles": "1.0.0",
-    "http-server": "^0.11.1",
+    "http-server": "^0.12.1",
     "rimraf": "2.5.4",
     "tsify": "^4.0.0",
     "typescript": "^2.9",

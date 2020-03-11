@@ -79,9 +79,6 @@ class Player {
       this.pause();
     } else {
       this.isPlaying = true;
-      if (iter === 0) {
-        simulationStarted();
-      }
       this.play();
     }
   }
@@ -169,15 +166,11 @@ function makeGUI() {
 
   d3.select("#next-step-button").on("click", () => {
     player.pause();
-    if (iter === 0) {
-      simulationStarted();
-    }
     oneStep();
   });
 
   d3.select("#data-regen-button").on("click", () => {
     generateData();
-    parametersChanged = true;
   });
 
   d3.select("#perturb-weights-button").on("click", () => {
@@ -197,7 +190,6 @@ function makeGUI() {
     dataThumbnails.classed("selected", false);
     d3.select(this).classed("selected", true);
     generateData();
-    parametersChanged = true;
     reset();
   });
 
@@ -216,7 +208,6 @@ function makeGUI() {
     regDataThumbnails.classed("selected", false);
     d3.select(this).classed("selected", true);
     generateData();
-    parametersChanged = true;
     reset();
   });
 
@@ -231,7 +222,6 @@ function makeGUI() {
     }
     state.networkShape[state.numHiddenLayers] = 2;
     state.numHiddenLayers++;
-    parametersChanged = true;
     reset();
   });
 
@@ -241,7 +231,6 @@ function makeGUI() {
     }
     state.numHiddenLayers--;
     state.networkShape.splice(state.numHiddenLayers);
-    parametersChanged = true;
     reset();
   });
 
@@ -265,7 +254,6 @@ function makeGUI() {
     state.percTrainData = this.value;
     d3.select("label[for='percTrainData'] .value").text(this.value);
     generateData();
-    parametersChanged = true;
     reset();
   });
   percTrain.property("value", state.percTrainData);
@@ -274,7 +262,6 @@ function makeGUI() {
   let percPerturb = d3.select("#percPerturbation").on("input", function() {
     state.percPerturbation = this.value;
     d3.select("label[for='percPerturbation'] .value").text(this.value);
-    parametersChanged = true;
   });
   percPerturb.property("value", state.percPerturbation);
   d3.select("label[for='percPerturbation'] .value").text(state.percPerturbation);
@@ -283,7 +270,6 @@ function makeGUI() {
     state.noise = this.value;
     d3.select("label[for='noise'] .value").text(this.value);
     generateData();
-    parametersChanged = true;
     reset();
   });
   let currentMax = parseInt(noise.property("max"));
@@ -302,7 +288,6 @@ function makeGUI() {
   let batchSize = d3.select("#batchSize").on("input", function() {
     state.batchSize = this.value;
     d3.select("label[for='batchSize'] .value").text(this.value);
-    parametersChanged = true;
     reset();
   });
   batchSize.property("value", state.batchSize);
@@ -310,7 +295,6 @@ function makeGUI() {
 
   let activationDropdown = d3.select("#activations").on("change", function() {
     state.activation = activations[this.value];
-    parametersChanged = true;
     reset();
   });
   activationDropdown.property("value",
@@ -319,14 +303,12 @@ function makeGUI() {
   let learningRate = d3.select("#learningRate").on("change", function() {
     state.learningRate = +this.value;
     state.serialize();
-    parametersChanged = true;
   });
   learningRate.property("value", state.learningRate);
 
   let regularDropdown = d3.select("#regularizations").on("change",
       function() {
     state.regularization = regularizations[this.value];
-    parametersChanged = true;
     reset();
   });
   regularDropdown.property("value",
@@ -334,7 +316,6 @@ function makeGUI() {
 
   let regularRate = d3.select("#regularRate").on("change", function() {
     state.regularizationRate = +this.value;
-    parametersChanged = true;
     reset();
   });
   regularRate.property("value", state.regularizationRate);
@@ -343,7 +324,6 @@ function makeGUI() {
     state.problem = problems[this.value];
     generateData();
     drawDatasetThumbnails();
-    parametersChanged = true;
     reset();
   });
   problem.property("value", getKeyFromValue(problems, state.problem));
@@ -673,7 +653,6 @@ function addPlusMinusControl(x: number, layerIdx: number) {
           return;
         }
         state.networkShape[i]++;
-        parametersChanged = true;
         reset();
       })
     .append("i")
@@ -688,7 +667,6 @@ function addPlusMinusControl(x: number, layerIdx: number) {
           return;
         }
         state.networkShape[i]--;
-        parametersChanged = true;
         reset();
       })
     .append("i")
@@ -1016,12 +994,6 @@ function generateData(firstTime = false) {
   testData = data.slice(splitIndex);
   heatMap.updatePoints(trainData);
   heatMap.updateTestPoints(state.showTestData ? testData : []);
-}
-
-let parametersChanged = false;
-
-function simulationStarted() {
-  parametersChanged = false;
 }
 
 drawDatasetThumbnails();

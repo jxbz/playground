@@ -109,6 +109,7 @@ export class State {
     {name: "batchSize", type: Type.NUMBER},
     {name: "dataset", type: Type.OBJECT, keyMap: datasets},
     {name: "regDataset", type: Type.OBJECT, keyMap: regDatasets},
+    {name: "optimiser", type: Type.STRING},
     {name: "learningRate", type: Type.NUMBER},
     {name: "regularizationRate", type: Type.NUMBER},
     {name: "noise", type: Type.NUMBER},
@@ -135,6 +136,7 @@ export class State {
 
   [key: string]: any;
   learningRate = 0.03;
+  optimiser = "fromage";
   regularizationRate = 0;
   showTestData = false;
   noise = 0;
@@ -150,7 +152,7 @@ export class State {
   collectStats = false;
   numHiddenLayers = 1;
   hiddenLayerControls: any[] = [];
-  networkShape: number[] = [4, 2];
+  networkShape: number[] = [4, 4];
   x = true;
   y = true;
   xTimesY = false;

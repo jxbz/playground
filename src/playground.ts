@@ -257,40 +257,17 @@ function makeGUI() {
   percPerturb.property("value", state.percPerturbation);
   d3.select("label[for='percPerturbation'] .value").text(state.percPerturbation);
 
-  let activationDropdown = d3.select("#activations").on("change", function() {
-    state.activation = activations[this.value];
-    reset();
-  });
-  activationDropdown.property("value",
-      getKeyFromValue(activations, state.activation));
-
   let learningRate = d3.select("#learningRate").on("change", function() {
     state.learningRate = +this.value;
     state.serialize();
   });
   learningRate.property("value", state.learningRate);
 
-  let regularDropdown = d3.select("#regularizations").on("change",
-      function() {
-    state.regularization = regularizations[this.value];
-    reset();
+  let optimiser = d3.select("#optimiser").on("change", function() {
+    state.optimiser = this.value;
+    state.serialize();
   });
-  regularDropdown.property("value",
-      getKeyFromValue(regularizations, state.regularization));
-
-  let regularRate = d3.select("#regularRate").on("change", function() {
-    state.regularizationRate = +this.value;
-    reset();
-  });
-  regularRate.property("value", state.regularizationRate);
-
-  let problem = d3.select("#problem").on("change", function() {
-    state.problem = problems[this.value];
-    generateData();
-    drawDatasetThumbnails();
-    reset();
-  });
-  problem.property("value", getKeyFromValue(problems, state.problem));
+  optimiser.property("value", state.optimiser);
 
   // Add scale to the gradient color map.
   let x = d3.scale.linear().domain([-1, 1]).range([0, 144]);

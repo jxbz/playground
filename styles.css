@@ -558,7 +558,7 @@ g.column rect {
   display: block;
   color: rgba(0, 0, 0, 0.5);
   border: none;
-  background: rgba(158,158,158,.1);
+  background: rgba(158,0,0,.1);
   border-radius: 3px;
   padding: 5px;
   font-size: 12px;
@@ -570,17 +570,17 @@ g.column rect {
 }
 
 #main-part .basic-button:hover {
-  background: rgba(158,158,158,.3);
+  background: rgba(158,0,0,.3);
   color: rgba(0, 0, 0, 0.6);
 }
 
 #main-part .basic-button:focus {
-  background: rgba(158,158,158,.4);
+  background: rgba(158,0,0,.4);
   color: rgba(0, 0, 0, 0.7);
 }
 
 #main-part .basic-button:active {
-  background: rgba(158,158,158,.5);
+  background: rgba(158,0,0,.5);
   color: rgba(0, 0, 0, 0.8);
 }
 

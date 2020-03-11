@@ -181,6 +181,9 @@ function makeGUI() {
   });
 
   d3.select("#perturb-weights-button").on("click", () => {
+    perturbWeightsAndBiases(network)
+    lossTrain = getLoss(network, trainData);
+    lossTest = getLoss(network, testData);
     updateUI()    
   });
   
@@ -390,6 +393,28 @@ function updateWeightsUI(network: nn.Node[][], container) {
               "stroke": colorScale(link.weight)
             })
             .datum(link);
+      }
+    }
+  }
+}
+
+function relativePerturbation(x: number, perturbationScale: number) {
+  let perturbationFactor = (1 + (2*Math.random() - 1) * perturbationScale)
+  return x * perturbationFactor;
+}
+
+function perturbWeightsAndBiases(network: nn.Node[][]) {
+  let perturbationScale = 0.1;
+
+  for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
+    let currentLayer = network[layerIdx];
+    // Update all the nodes in this layer.
+    for (let i = 0; i < currentLayer.length; i++) {
+      let node = currentLayer[i];
+      node.bias = relativePerturbation(node.bias, perturbationScale)
+      for (let j = 0; j < node.inputLinks.length; j++) {
+        let link = node.inputLinks[j];
+        link.weight = relativePerturbation(link.weight, perturbationScale)
       }
     }
   }

@@ -336,6 +336,32 @@ export function updateWeights(network: Node[][], optimiser: string, learningRate
     regularizationRate: number) {
   for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
     let currentLayer = network[layerIdx];
+
+    // Collect weight and gradient norms.
+    let bias_norm = 0;
+    let g_bias_norm = 0;
+    let weight_norm = 0;
+    let g_weight_norm = 0;
+    if (optimiser === "fromage") {
+
+      for (let i = 0; i < currentLayer.length; i++) {
+        let node = currentLayer[i];
+        bias_norm += node.bias**2
+        g_bias_norm += node.accInputDer**2
+
+        for (let j = 0; j < node.inputLinks.length; j++) {
+          let link = node.inputLinks[j];
+          weight_norm += link.weight**2
+          g_weight_norm += link.accErrorDer**2
+        }
+      }
+      bias_norm = bias_norm**0.5;
+      g_bias_norm = g_bias_norm**0.5;
+      weight_norm = weight_norm**0.5;
+      g_weight_norm = g_weight_norm**0.5;
+    }
+
+    // Loop again to actually do the update
     for (let i = 0; i < currentLayer.length; i++) {
       let node = currentLayer[i];
       // Update the node's bias.
@@ -343,8 +369,9 @@ export function updateWeights(network: Node[][], optimiser: string, learningRate
         if (optimiser === "sgd") {
           node.bias -= learningRate * node.accInputDer / node.numAccumulatedDers;  
         }
-        if (optimiser === "fromage") {
-          // todo: implement
+        if (optimiser === "fromage" && g_bias_norm > 0) {
+          node.bias -= learningRate * node.accInputDer * bias_norm / g_bias_norm;
+          node.bias /= Math.sqrt(1+learningRate**2);
         }
         
         node.accInputDer = 0;
@@ -361,11 +388,11 @@ export function updateWeights(network: Node[][], optimiser: string, learningRate
         if (link.numAccumulatedDers > 0) {
           // Update the weight based on dE/dw.
           if (optimiser === "sgd") {
-            link.weight = link.weight -
-              (learningRate / link.numAccumulatedDers) * link.accErrorDer;  
+            link.weight -= learningRate * link.accErrorDer / link.numAccumulatedDers;
           }
-          if (optimiser === "fromage") {
-            // todo: implement
+          if (optimiser === "fromage" && g_weight_norm > 0) {
+            link.weight -= learningRate * link.accErrorDer * weight_norm / g_weight_norm;
+            link.weight /= Math.sqrt(1+learningRate**2)
           }
           // Further update the weight based on regularization.
           let newLinkWeight = link.weight -

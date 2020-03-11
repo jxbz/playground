@@ -332,7 +332,7 @@ export function backProp(network: Node[][], target: number,
  * Updates the weights of the network using the previously accumulated error
  * derivatives.
  */
-export function updateWeights(network: Node[][], learningRate: number,
+export function updateWeights(network: Node[][], optimiser: string, learningRate: number,
     regularizationRate: number) {
   for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
     let currentLayer = network[layerIdx];
@@ -340,7 +340,13 @@ export function updateWeights(network: Node[][], learningRate: number,
       let node = currentLayer[i];
       // Update the node's bias.
       if (node.numAccumulatedDers > 0) {
-        node.bias -= learningRate * node.accInputDer / node.numAccumulatedDers;
+        if (optimiser === "sgd") {
+          node.bias -= learningRate * node.accInputDer / node.numAccumulatedDers;  
+        }
+        if (optimiser === "fromage") {
+          // todo: implement
+        }
+        
         node.accInputDer = 0;
         node.numAccumulatedDers = 0;
       }
@@ -354,8 +360,13 @@ export function updateWeights(network: Node[][], learningRate: number,
             link.regularization.der(link.weight) : 0;
         if (link.numAccumulatedDers > 0) {
           // Update the weight based on dE/dw.
-          link.weight = link.weight -
-              (learningRate / link.numAccumulatedDers) * link.accErrorDer;
+          if (optimiser === "sgd") {
+            link.weight = link.weight -
+              (learningRate / link.numAccumulatedDers) * link.accErrorDer;  
+          }
+          if (optimiser === "fromage") {
+            // todo: implement
+          }
           // Further update the weight based on regularization.
           let newLinkWeight = link.weight -
               (learningRate * regularizationRate) * regulDer;

@@ -127,7 +127,6 @@ export class State {
     {name: "cosY", type: Type.BOOLEAN},
     {name: "sinY", type: Type.BOOLEAN},
     {name: "collectStats", type: Type.BOOLEAN},
-    {name: "tutorial", type: Type.STRING},
     {name: "problem", type: Type.OBJECT, keyMap: problems},
     {name: "initZero", type: Type.BOOLEAN},
     {name: "hideText", type: Type.BOOLEAN}
@@ -140,7 +139,6 @@ export class State {
   noise = 0;
   batchSize = 10;
   discretize = false;
-  tutorial: string = null;
   percTrainData = 50;
   activation = nn.Activations.RELU;
   regularization: nn.RegularizationFunction = null;

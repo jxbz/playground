@@ -67,24 +67,6 @@ let INPUTS: {[name: string]: InputFeature} = {
   "y": {f: (x, y) => y, label: "X_2"},
 };
 
-let HIDABLE_CONTROLS = [
-  ["Show test data", "showTestData"],
-  ["Discretize output", "discretize"],
-  ["Play button", "playButton"],
-  ["Step button", "stepButton"],
-  ["Reset button", "resetButton"],
-  ["Learning rate", "learningRate"],
-  ["Activation", "activation"],
-  ["Regularization", "regularization"],
-  ["Regularization rate", "regularizationRate"],
-  ["Problem type", "problem"],
-  ["Which dataset", "dataset"],
-  ["Ratio train data", "percTrainData"],
-  ["Noise level", "noise"],
-  ["Batch size", "batchSize"],
-  ["# of hidden layers", "numHiddenLayers"],
-];
-
 class Player {
   private timerIndex = 0;
   private isPlaying = false;
@@ -173,13 +155,11 @@ let lineChart = new AppendingLineChart(d3.select("#linechart"),
 function makeGUI() {
   d3.select("#reset-button").on("click", () => {
     reset();
-    userHasInteracted();
     d3.select("#play-pause-button");
   });
 
   d3.select("#play-pause-button").on("click", function () {
     // Change the button's content.
-    userHasInteracted();
     player.playOrPause();
   });
 
@@ -189,7 +169,6 @@ function makeGUI() {
 
   d3.select("#next-step-button").on("click", () => {
     player.pause();
-    userHasInteracted();
     if (iter === 0) {
       simulationStarted();
     }
@@ -262,7 +241,6 @@ function makeGUI() {
   let showTestData = d3.select("#show-test-data").on("change", function() {
     state.showTestData = this.checked;
     state.serialize();
-    userHasInteracted();
     heatMap.updateTestPoints(state.showTestData ? testData : []);
   });
   // Check/uncheck the checkbox according to the current state.
@@ -271,7 +249,6 @@ function makeGUI() {
   let discretize = d3.select("#discretize").on("change", function() {
     state.discretize = this.checked;
     state.serialize();
-    userHasInteracted();
     updateUI();
   });
   // Check/uncheck the checbox according to the current state.
@@ -327,7 +304,6 @@ function makeGUI() {
   let learningRate = d3.select("#learningRate").on("change", function() {
     state.learningRate = +this.value;
     state.serialize();
-    userHasInteracted();
     parametersChanged = true;
   });
   learningRate.property("value", state.learningRate);
@@ -924,12 +900,9 @@ export function getOutputWeights(network: nn.Node[][]): number[] {
   return weights;
 }
 
-function reset(onStartup=false) {
+function reset() {
   lineChart.reset();
   state.serialize();
-  if (!onStartup) {
-    userHasInteracted();
-  }
   player.pause();
 
   let suffix = state.numHiddenLayers !== 1 ? "s" : "";
@@ -1011,52 +984,11 @@ function drawDatasetThumbnails() {
   }
 }
 
-function hideControls() {
-  // Set display:none to all the UI elements that are hidden.
-  let hiddenProps = state.getHiddenProps();
-  hiddenProps.forEach(prop => {
-    let controls = d3.selectAll(`.ui-${prop}`);
-    if (controls.size() === 0) {
-      console.warn(`0 html elements found with class .ui-${prop}`);
-    }
-    controls.style("display", "none");
-  });
-
-  // Also add checkbox for each hidable control in the "use it in classrom"
-  // section.
-  let hideControls = d3.select(".hide-controls");
-  HIDABLE_CONTROLS.forEach(([text, id]) => {
-    let label = hideControls.append("label")
-      .attr("class", "mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect");
-    let input = label.append("input")
-      .attr({
-        type: "checkbox",
-        class: "mdl-checkbox__input",
-      });
-    if (hiddenProps.indexOf(id) === -1) {
-      input.attr("checked", "true");
-    }
-    input.on("change", function() {
-      state.setHideProperty(id, !this.checked);
-      state.serialize();
-      userHasInteracted();
-      d3.select(".hide-controls-link")
-        .attr("href", window.location.href);
-    });
-    label.append("span")
-      .attr("class", "mdl-checkbox__label label")
-      .text(text);
-  });
-  d3.select(".hide-controls-link")
-    .attr("href", window.location.href);
-}
-
 function generateData(firstTime = false) {
   if (!firstTime) {
     // Change the seed.
     state.seed = Math.random().toFixed(5);
     state.serialize();
-    userHasInteracted();
   }
   Math.seedrandom(state.seed);
   let numSamples = (state.problem === Problem.REGRESSION) ?
@@ -1074,19 +1006,7 @@ function generateData(firstTime = false) {
   heatMap.updateTestPoints(state.showTestData ? testData : []);
 }
 
-let firstInteraction = true;
 let parametersChanged = false;
-
-function userHasInteracted() {
-  if (!firstInteraction) {
-    return;
-  }
-  firstInteraction = false;
-  let page = 'index';
-  if (state.tutorial != null && state.tutorial !== '') {
-    page = `/v/tutorials/${state.tutorial}`;
-  }
-}
 
 function simulationStarted() {
   parametersChanged = false;
@@ -1096,4 +1016,4 @@ drawDatasetThumbnails();
 initTutorial();
 makeGUI();
 generateData(true);
-reset(true);
+reset();

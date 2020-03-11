@@ -169,9 +169,9 @@ function makeGUI() {
     oneStep();
   });
 
-  d3.select("#data-regen-button").on("click", () => {
-    generateData();
-  });
+  // d3.select("#data-regen-button").on("click", () => {
+  //   generateData();
+  // });
 
   d3.select("#perturb-weights-button").on("click", () => {
     perturbWeightsAndBiases(network)
@@ -250,48 +250,12 @@ function makeGUI() {
   // Check/uncheck the checbox according to the current state.
   discretize.property("checked", state.discretize);
 
-  let percTrain = d3.select("#percTrainData").on("input", function() {
-    state.percTrainData = this.value;
-    d3.select("label[for='percTrainData'] .value").text(this.value);
-    generateData();
-    reset();
-  });
-  percTrain.property("value", state.percTrainData);
-  d3.select("label[for='percTrainData'] .value").text(state.percTrainData);
-
   let percPerturb = d3.select("#percPerturbation").on("input", function() {
     state.percPerturbation = this.value;
     d3.select("label[for='percPerturbation'] .value").text(this.value);
   });
   percPerturb.property("value", state.percPerturbation);
   d3.select("label[for='percPerturbation'] .value").text(state.percPerturbation);
-
-  let noise = d3.select("#noise").on("input", function() {
-    state.noise = this.value;
-    d3.select("label[for='noise'] .value").text(this.value);
-    generateData();
-    reset();
-  });
-  let currentMax = parseInt(noise.property("max"));
-  if (state.noise > currentMax) {
-    if (state.noise <= 80) {
-      noise.property("max", state.noise);
-    } else {
-      state.noise = 50;
-    }
-  } else if (state.noise < 0) {
-    state.noise = 0;
-  }
-  noise.property("value", state.noise);
-  d3.select("label[for='noise'] .value").text(state.noise);
-
-  let batchSize = d3.select("#batchSize").on("input", function() {
-    state.batchSize = this.value;
-    d3.select("label[for='batchSize'] .value").text(this.value);
-    reset();
-  });
-  batchSize.property("value", state.batchSize);
-  d3.select("label[for='batchSize'] .value").text(state.batchSize);
 
   let activationDropdown = d3.select("#activations").on("change", function() {
     state.activation = activations[this.value];

@@ -180,6 +180,10 @@ function makeGUI() {
     parametersChanged = true;
   });
 
+  d3.select("#perturb-weights-button").on("click", () => {
+    updateUI()    
+  });
+  
   let dataThumbnails = d3.selectAll("canvas[data-dataset]");
   dataThumbnails.on("click", function() {
     let newDataset = datasets[this.dataset.dataset];
@@ -847,6 +851,9 @@ function updateUI(firstStep = false) {
   d3.select("#loss-test").text(humanReadable(lossTest));
   d3.select("#iter-number").text(addCommas(zeroPad(iter)));
   lineChart.addDataPoint([lossTrain, lossTest]);
+  if (firstStep) {
+    lineChart.addDataPoint([lossTrain, lossTest]);  
+  }
 }
 
 function constructInputIds(): string[] {
@@ -923,33 +930,6 @@ function reset() {
   updateUI(true);
 };
 
-function initTutorial() {
-  if (state.tutorial == null || state.tutorial === '' || state.hideText) {
-    return;
-  }
-  // Remove all other text.
-  d3.selectAll("article div.l--body").remove();
-  let tutorial = d3.select("article").append("div")
-    .attr("class", "l--body");
-  // Insert tutorial text.
-  d3.html(`tutorials/${state.tutorial}.html`, (err, htmlFragment) => {
-    if (err) {
-      throw err;
-    }
-    tutorial.node().appendChild(htmlFragment);
-    // If the tutorial has a <title> tag, set the page title to that.
-    let title = tutorial.select("title");
-    if (title.size()) {
-      d3.select("header h1").style({
-        "margin-top": "20px",
-        "margin-bottom": "20px",
-      })
-      .text(title.text());
-      document.title = title.text();
-    }
-  });
-}
-
 function drawDatasetThumbnails() {
   function renderThumbnail(canvas, dataGenerator) {
     let w = 100;
@@ -1013,7 +993,6 @@ function simulationStarted() {
 }
 
 drawDatasetThumbnails();
-initTutorial();
 makeGUI();
 generateData(true);
 reset();

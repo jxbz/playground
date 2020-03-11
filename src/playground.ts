@@ -271,6 +271,14 @@ function makeGUI() {
   percTrain.property("value", state.percTrainData);
   d3.select("label[for='percTrainData'] .value").text(state.percTrainData);
 
+  let percPerturb = d3.select("#percPerturbation").on("input", function() {
+    state.percPerturbation = this.value;
+    d3.select("label[for='percPerturbation'] .value").text(this.value);
+    parametersChanged = true;
+  });
+  percPerturb.property("value", state.percPerturbation);
+  d3.select("label[for='percPerturbation'] .value").text(state.percPerturbation);
+
   let noise = d3.select("#noise").on("input", function() {
     state.noise = this.value;
     d3.select("label[for='noise'] .value").text(this.value);
@@ -398,23 +406,22 @@ function updateWeightsUI(network: nn.Node[][], container) {
   }
 }
 
-function relativePerturbation(x: number, perturbationScale: number) {
+function relativePerturbation(x: number) {
+  let perturbationScale = state.percPerturbation / 100
   let perturbationFactor = (1 + (2*Math.random() - 1) * perturbationScale)
   return x * perturbationFactor;
 }
 
 function perturbWeightsAndBiases(network: nn.Node[][]) {
-  let perturbationScale = 0.1;
-
   for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
     let currentLayer = network[layerIdx];
     // Update all the nodes in this layer.
     for (let i = 0; i < currentLayer.length; i++) {
       let node = currentLayer[i];
-      node.bias = relativePerturbation(node.bias, perturbationScale)
+      node.bias = relativePerturbation(node.bias)
       for (let j = 0; j < node.inputLinks.length; j++) {
         let link = node.inputLinks[j];
-        link.weight = relativePerturbation(link.weight, perturbationScale)
+        link.weight = relativePerturbation(link.weight)
       }
     }
   }

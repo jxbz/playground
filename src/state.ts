@@ -117,6 +117,7 @@ export class State {
     {name: "showTestData", type: Type.BOOLEAN},
     {name: "discretize", type: Type.BOOLEAN},
     {name: "percTrainData", type: Type.NUMBER},
+    {name: "percPerturbation", type: Type.NUMBER},
     {name: "x", type: Type.BOOLEAN},
     {name: "y", type: Type.BOOLEAN},
     {name: "xTimesY", type: Type.BOOLEAN},
@@ -140,6 +141,7 @@ export class State {
   batchSize = 10;
   discretize = false;
   percTrainData = 50;
+  percPerturbation = 10;
   activation = nn.Activations.RELU;
   regularization: nn.RegularizationFunction = null;
   problem = Problem.CLASSIFICATION;

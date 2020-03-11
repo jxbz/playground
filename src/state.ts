@@ -135,12 +135,12 @@ export class State {
   ];
 
   [key: string]: any;
-  learningRate = 0.03;
+  learningRate = 0.01;
   optimiser = "fromage";
   regularizationRate = 0;
   showTestData = false;
   noise = 0;
-  batchSize = 10;
+  batchSize = 30;
   discretize = false;
   percTrainData = 50;
   percPerturbation = 10;

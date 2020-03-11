@@ -217,10 +217,10 @@ function makeGUI() {
     .classed("selected", true);
 
   d3.select("#add-layers").on("click", () => {
-    if (state.numHiddenLayers >= 6) {
+    if (state.numHiddenLayers >= 15) {
       return;
     }
-    state.networkShape[state.numHiddenLayers] = 2;
+    state.networkShape[state.numHiddenLayers] = 4;
     state.numHiddenLayers++;
     reset();
   });
@@ -249,6 +249,13 @@ function makeGUI() {
   });
   // Check/uncheck the checbox according to the current state.
   discretize.property("checked", state.discretize);
+
+  let batchSize = d3.select("#batchSize").on("input", function() {
+    state.batchSize = this.value;
+    d3.select("label[for='batchSize'] .value").text(this.value);
+  });
+  batchSize.property("value", state.batchSize);
+  d3.select("label[for='batchSize'] .value").text(state.batchSize);
 
   let percPerturb = d3.select("#percPerturbation").on("input", function() {
     state.percPerturbation = this.value;

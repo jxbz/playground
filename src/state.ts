@@ -135,7 +135,7 @@ export class State {
   ];
 
   [key: string]: any;
-  learningRate = 0.01;
+  learningRate = 0.001;
   optimiser = "fromage";
   regularizationRate = 0;
   showTestData = false;

@@ -201,9 +201,6 @@ function makeGUI() {
     .classed("selected", true);
 
   d3.select("#add-layers").on("click", () => {
-    if (state.numHiddenLayers >= 15) {
-      return;
-    }
     state.networkShape[state.numHiddenLayers] = 4;
     state.numHiddenLayers++;
     reset();
@@ -491,7 +488,7 @@ function drawNetwork(network: nn.Node[][]): void {
     let numNodes = network[layerIdx].length;
     let cx = layerScale(layerIdx) + RECT_SIZE / 2;
     maxY = Math.max(maxY, nodeIndexScale(numNodes));
-    addPlusMinusControl(layerScale(layerIdx), layerIdx);
+    // addPlusMinusControl(layerScale(layerIdx), layerIdx);
     for (let i = 0; i < numNodes; i++) {
       let node = network[layerIdx][i];
       let cy = nodeIndexScale(i) + RECT_SIZE / 2;
@@ -503,7 +500,8 @@ function drawNetwork(network: nn.Node[][]): void {
       let nextNumNodes = network[layerIdx + 1].length;
       if (idWithCallout == null &&
           i === numNodes - 1 &&
-          nextNumNodes <= numNodes) {
+          nextNumNodes <= numNodes &&
+            numLayers <= 6) {
         calloutThumb.style({
           display: null,
           top: `${20 + 3 + cy}px`,
@@ -525,7 +523,8 @@ function drawNetwork(network: nn.Node[][]): void {
             link.source.id === lastNodePrevLayer.id &&
             (link.source.id !== idWithCallout || numLayers <= 5) &&
             link.dest.id !== idWithCallout &&
-            prevLayer.length >= numNodes) {
+            prevLayer.length >= numNodes &&
+            numLayers <= 6) {
           let midPoint = path.getPointAtLength(path.getTotalLength() * 0.7);
           calloutWeights.style({
             display: null,

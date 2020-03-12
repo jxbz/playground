@@ -240,33 +240,6 @@ export class State {
     return state;
   }
 
-  /**
-   * Serializes the state into the url hash.
-   */
-  serialize() {
-    // Serialize regular properties.
-    let props: string[] = [];
-    State.PROPS.forEach(({name, type, keyMap}) => {
-      let value = this[name];
-      // Don't serialize missing values.
-      if (value == null) {
-        return;
-      }
-      if (type === Type.OBJECT) {
-        value = getKeyFromValue(keyMap, value);
-      } else if (type === Type.ARRAY_NUMBER ||
-          type === Type.ARRAY_STRING) {
-        value = value.join(",");
-      }
-      props.push(`${name}=${value}`);
-    });
-    // Serialize properties that correspond to hiding UI controls.
-    getHideProps(this).forEach(prop => {
-      props.push(`${prop}=${this[prop]}`);
-    });
-    window.location.hash = props.join("&");
-  }
-
   /** Returns all the hidden properties. */
   getHiddenProps(): string[] {
     let result: string[] = [];

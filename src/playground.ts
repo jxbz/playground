@@ -31,22 +31,6 @@ import * as d3 from 'd3';
 
 let mainWidth;
 
-// More scrolling
-d3.select(".more button").on("click", function() {
-  let position = 800;
-  d3.transition()
-    .duration(1000)
-    .tween("scroll", scrollTween(position));
-});
-
-function scrollTween(offset) {
-  return function() {
-    let i = d3.interpolateNumber(window.pageYOffset ||
-        document.documentElement.scrollTop, offset);
-    return function(t) { scrollTo(0, i(t)); };
-  };
-}
-
 const RECT_SIZE = 30;
 const BIAS_SIZE = 5;
 const NUM_SAMPLES_CLASSIFY = 500;
@@ -236,7 +220,6 @@ function makeGUI() {
 
   let showTestData = d3.select("#show-test-data").on("change", function() {
     state.showTestData = this.checked;
-    state.serialize();
     heatMap.updateTestPoints(state.showTestData ? testData : []);
   });
   // Check/uncheck the checkbox according to the current state.
@@ -244,7 +227,6 @@ function makeGUI() {
 
   let discretize = d3.select("#discretize").on("change", function() {
     state.discretize = this.checked;
-    state.serialize();
     updateUI();
   });
   // Check/uncheck the checbox according to the current state.
@@ -266,13 +248,11 @@ function makeGUI() {
 
   let learningRate = d3.select("#learningRate").on("change", function() {
     state.learningRate = +this.value;
-    state.serialize();
   });
   learningRate.property("value", state.learningRate);
 
   let optimiser = d3.select("#optimiser").on("change", function() {
     state.optimiser = this.value;
-    state.serialize();
   });
   optimiser.property("value", state.optimiser);
 
@@ -867,7 +847,6 @@ export function getOutputWeights(network: nn.Node[][]): number[] {
 
 function reset() {
   lineChart.reset();
-  state.serialize();
   player.pause();
 
   let suffix = state.numHiddenLayers !== 1 ? "s" : "";
@@ -926,7 +905,6 @@ function generateData(firstTime = false) {
   if (!firstTime) {
     // Change the seed.
     state.seed = Math.random().toFixed(5);
-    state.serialize();
   }
   Math.seedrandom(state.seed);
   let numSamples = (state.problem === Problem.REGRESSION) ?

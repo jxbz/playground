@@ -336,22 +336,36 @@ function updateWeightsUI(network: nn.Node[][], container) {
   }
 }
 
-function relativePerturbation(x: number) {
-  let perturbationScale = state.percPerturbation / 100
-  let perturbationFactor = (1 + (2*Math.random() - 1) * perturbationScale)
-  return x * perturbationFactor;
+function relativePerturbation(x: number, weight_scale: number) {
+  let proportion = state.percPerturbation / 100
+  return x + Math.sign(Math.random() - 0.5) * weight_scale * proportion
 }
 
 function perturbWeightsAndBiases(network: nn.Node[][]) {
   for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
     let currentLayer = network[layerIdx];
+
+    // Collect weight norms.
+    let bias_norm = 0;
+    let weight_norm = 0;
+    for (let i = 0; i < currentLayer.length; i++) {
+      let node = currentLayer[i];
+      bias_norm += node.bias**2
+      for (let j = 0; j < node.inputLinks.length; j++) {
+        let link = node.inputLinks[j];
+        weight_norm += link.weight**2
+      }
+    }
+    let bias_rms = (bias_norm/currentLayer.length)**0.5;
+    let weight_rms = (weight_norm/(currentLayer.length*currentLayer[0].inputLinks.length))**0.5;
+
     // Update all the nodes in this layer.
     for (let i = 0; i < currentLayer.length; i++) {
       let node = currentLayer[i];
-      node.bias = relativePerturbation(node.bias)
+      node.bias = relativePerturbation(node.bias, bias_rms)
       for (let j = 0; j < node.inputLinks.length; j++) {
         let link = node.inputLinks[j];
-        link.weight = relativePerturbation(link.weight)
+        link.weight = relativePerturbation(link.weight, weight_rms)
       }
     }
   }

@@ -118,7 +118,7 @@ limitations under the License.
           <span>Perturb Net</span>
         </h4>
         <div class="ui-percPerturbation">
-          <label for="percPerturbation">Scale of relative perturbation:&nbsp;&nbsp;<span class="value">XX</span>%</label>
+          <label for="percPerturbation">Relative scale of perturbation:&nbsp;&nbsp;<span class="value">XX</span>%</label>
           <p class="slider">
             <input class="mdl-slider mdl-js-slider" type="range" id="percPerturbation" min="1" max="100" step="1">
           </p>
@@ -177,6 +177,7 @@ limitations under the License.
 
     <!-- Hidden Layers Column -->
     <div class="column hidden-layers">
+      <br/>
       <h4>
         <div class="ui-numHiddenLayers">
           <button id="add-layers" class="mdl-button mdl-js-button mdl-button--icon">
@@ -189,7 +190,18 @@ limitations under the License.
         <span id="num-layers"></span>
         <span id="layers-label"></span>
       </h4>
-      <div class="bracket"></div>
+      <h4>
+        <div class="ui-numNeurons">
+          <button id="add-neurons" class="mdl-button mdl-js-button mdl-button--icon">
+            <i class="material-icons">add</i>
+          </button>
+          <button id="remove-neurons" class="mdl-button mdl-js-button mdl-button--icon">
+            <i class="material-icons">remove</i>
+          </button>
+        </div>
+        <span id="num-neurons"></span>
+        <span id="neurons-label"></span>
+      </h4>
     </div>
 
     <!-- Output Column -->

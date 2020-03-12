@@ -201,7 +201,14 @@ function makeGUI() {
     .classed("selected", true);
 
   d3.select("#add-layers").on("click", () => {
-    state.networkShape[state.numHiddenLayers] = 4;
+    if (state.numHiddenLayers >= 20) {
+      return;
+    }
+    let numNeurons = state.networkShape[0]
+    if (typeof numNeurons === "undefined") {
+      numNeurons = 4
+    }
+    state.networkShape[state.numHiddenLayers] = numNeurons;
     state.numHiddenLayers++;
     reset();
   });
@@ -212,6 +219,24 @@ function makeGUI() {
     }
     state.numHiddenLayers--;
     state.networkShape.splice(state.numHiddenLayers);
+    reset();
+  });
+
+  d3.select("#add-neurons").on("click", () => {
+    if (state.networkShape[0] >= 6 ||
+        state.numHiddenLayers <= 0) {
+      return;
+    }
+    state.networkShape = state.networkShape.map(function(x) {return x+1;});
+    reset();
+  });
+
+  d3.select("#remove-neurons").on("click", () => {
+    if (state.networkShape[0] === 1 ||
+        state.numHiddenLayers <= 0) {
+      return;
+    }
+    state.networkShape = state.networkShape.map(function(x) {return x-1;});
     reset();
   });
 
@@ -501,7 +526,8 @@ function drawNetwork(network: nn.Node[][]): void {
       if (idWithCallout == null &&
           i === numNodes - 1 &&
           nextNumNodes <= numNodes &&
-            numLayers <= 6) {
+            numLayers <= 6 &&
+            state.networkShape[0] <= 5) {
         calloutThumb.style({
           display: null,
           top: `${20 + 3 + cy}px`,
@@ -524,7 +550,8 @@ function drawNetwork(network: nn.Node[][]): void {
             (link.source.id !== idWithCallout || numLayers <= 5) &&
             link.dest.id !== idWithCallout &&
             prevLayer.length >= numNodes &&
-            numLayers <= 6) {
+            numLayers <= 6 &&
+            state.networkShape[0] <= 5) {
           let midPoint = path.getPointAtLength(path.getTotalLength() * 0.7);
           calloutWeights.style({
             display: null,
@@ -851,6 +878,10 @@ function reset() {
   let suffix = state.numHiddenLayers !== 1 ? "s" : "";
   d3.select("#layers-label").text("Hidden layer" + suffix);
   d3.select("#num-layers").text(state.numHiddenLayers);
+
+  let suffix2 = state.networkShape[state.numHiddenLayers-1] !== 1 ? "s" : "";
+  d3.select("#neurons-label").text("Neuron" + suffix2 + " / layer");
+  d3.select("#num-neurons").text(state.networkShape[state.numHiddenLayers-1]);
 
   // Make a simple network.
   iter = 0;
